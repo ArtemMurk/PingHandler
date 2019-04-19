@@ -1,8 +1,7 @@
 package com.murk.telegram.ping.handler.core.controller;
 
 import com.murk.telegram.ping.handler.core.service.PingService;
-import com.murk.telegram.ping.handler.core.to.AuthorizationTO;
-import com.murk.telegram.ping.handler.core.to.PingTO;
+import com.murk.telegram.ping.handler.core.to.PingResponseTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +18,17 @@ public class PingRestController {
     }
 
     @RequestMapping(value = "/rest/authorization/", method = RequestMethod.POST)
-    public ResponseEntity<AuthorizationTO> authorization(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
+    public ResponseEntity<PingResponseTO> authorization(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
     {
-        AuthorizationTO authorizationResponse = service.authorization(clientKey,moduleName,processName);
+        PingResponseTO authorizationResponse = service.authorization(clientKey,moduleName,processName);
         return new ResponseEntity<>(authorizationResponse, HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/rest/ping/", method = RequestMethod.POST)
-    public ResponseEntity<PingTO> ping(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
+    public ResponseEntity<PingResponseTO> ping(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
     {
-        PingTO pingResponse = service.ping(clientKey,moduleName,processName);
+        PingResponseTO pingResponse = service.ping(clientKey,moduleName,processName);
         return new ResponseEntity<>(pingResponse, HttpStatus.OK);
     }
 
