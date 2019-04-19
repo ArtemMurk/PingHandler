@@ -19,6 +19,6 @@ public class PingResponseEntityExceptionHandler
             RuntimeException ex, WebRequest request) {
         String bodyOfResponse = "This should be application specific";
         return handleExceptionInternal(ex, bodyOfResponse,
-                new HttpHeaders(), HttpStatus.CONFLICT, request);
+                new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 }

@@ -1,14 +1,12 @@
 package com.murk.telegram.ping.handler.core.controller;
 
-import com.murk.telegram.ping.handler.core.model.Application;
 import com.murk.telegram.ping.handler.core.service.PingService;
+import com.murk.telegram.ping.handler.core.to.AuthorizationTO;
+import com.murk.telegram.ping.handler.core.to.PingTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -20,31 +18,19 @@ public class PingRestController {
         this.service = service;
     }
 
-    @RequestMapping(value = "/rest/authorization/", method = RequestMethod.GET)
-    public ResponseEntity<Application> authorization()
+    @RequestMapping(value = "/rest/authorization/", method = RequestMethod.POST)
+    public ResponseEntity<AuthorizationTO> authorization(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
     {
-        return new ResponseEntity<>(new Application(2), HttpStatus.OK);
+        AuthorizationTO authorizationResponse = service.authorization(clientKey,moduleName,processName);
+        return new ResponseEntity<>(authorizationResponse, HttpStatus.OK);
     }
 
 
-    @RequestMapping(value = "/rest/authorization2/", method = RequestMethod.GET)
-    public Application authorization2()
+    @RequestMapping(value = "/rest/ping/", method = RequestMethod.POST)
+    public ResponseEntity<PingTO> ping(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
     {
-        return new Application(2);
-    }
-
-
-    @RequestMapping(value = "/getException", method = RequestMethod.GET)
-    public Application getException()
-    {
-        return service.getException();
-    }
-
-
-
-    @RequestMapping(value = "/hello",method = RequestMethod.GET)
-    ResponseEntity<String> hello() {
-        return new ResponseEntity<>("Hello World!", HttpStatus.OK);
+        PingTO pingResponse = service.ping(clientKey,moduleName,processName);
+        return new ResponseEntity<>(pingResponse, HttpStatus.OK);
     }
 
 }
