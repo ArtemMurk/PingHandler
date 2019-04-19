@@ -2,6 +2,9 @@ package com.murk.telegram.ping.handler.core.utils;
 
 public class ValidationUtil {
 
+    public static final String PARAMS_IS_EMPTY = "params can't be empty";
+    public static final String PARAMS_CONTAINS_NOT_VALID_SYMBOLS = "params must contains only numbers,letters and white spaces";
+    public static final String PARAMS_IS_TOO_LONG = "param length must be less then 50 symbols";
     public static void validate(String... params)
     {
         for (String param : params) {
@@ -19,21 +22,21 @@ public class ValidationUtil {
     private static void checkNull(String param) {
         if (param == null || param.isEmpty())
         {
-            throw new IllegalArgumentException("params can't be empty");
+            throw new IllegalArgumentException(PARAMS_IS_EMPTY);
         }
     }
 
     private static void checkIllegalSymbols(String param) {
         if (!param.matches("[0-9a-zA-Z\\s]+"))
         {
-            throw new IllegalArgumentException("params must contains only numbers,letters and white spaces");
+            throw new IllegalArgumentException(PARAMS_CONTAINS_NOT_VALID_SYMBOLS);
         }
     }
 
     private static void checkParamLength(String param) {
         if (param.length()>50)
         {
-            throw new IllegalArgumentException("param length must be less then 50 symbols");
+            throw new IllegalArgumentException(PARAMS_IS_TOO_LONG);
         }
     }
 }
