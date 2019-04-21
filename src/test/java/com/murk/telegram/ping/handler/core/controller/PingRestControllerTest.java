@@ -1,5 +1,6 @@
 package com.murk.telegram.ping.handler.core.controller;
 
+import com.murk.telegram.ping.handler.core.exception.NotAuthorizedException;
 import com.murk.telegram.ping.handler.core.service.PingService;
 import com.murk.telegram.ping.handler.core.to.PingResponseTO;
 import com.murk.telegram.ping.handler.core.to.STATUS;
@@ -141,6 +142,26 @@ public class PingRestControllerTest {
         mockMvc.perform(post("/rest/authorization?clientKey="+clientKey+"&moduleName="+moduleName+"&"+"processName="+processName))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("status", is(STATUS.ERROR.name())))
+                .andExpect(jsonPath("message", is(exceptionMessage)));
+
+        verify(service, times(1)).authorization(clientKey,moduleName,processName);
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    public void notAuthorizedException() throws Exception
+    {
+        String clientKey = "client id mock";
+        String moduleName = "module name mock";
+        String processName = "process name mock";
+
+        String exceptionMessage = "Not authorized";
+
+        when(service.authorization(clientKey,moduleName,processName)).thenThrow(new NotAuthorizedException(exceptionMessage));
+
+        mockMvc.perform(post("/rest/authorization?clientKey="+clientKey+"&moduleName="+moduleName+"&"+"processName="+processName))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("status", is(STATUS.FAIL.name())))
                 .andExpect(jsonPath("message", is(exceptionMessage)));
 
         verify(service, times(1)).authorization(clientKey,moduleName,processName);

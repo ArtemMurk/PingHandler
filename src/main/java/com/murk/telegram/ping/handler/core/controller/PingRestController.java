@@ -1,5 +1,6 @@
 package com.murk.telegram.ping.handler.core.controller;
 
+import com.murk.telegram.ping.handler.core.exception.NotAuthorizedException;
 import com.murk.telegram.ping.handler.core.service.PingService;
 import com.murk.telegram.ping.handler.core.to.PingResponseTO;
 import com.murk.telegram.ping.handler.core.to.STATUS;
@@ -44,12 +45,22 @@ public class PingRestController {
     }
 
     @ExceptionHandler(value
-            = { Exception.class })
+            = { RuntimeException.class })
     protected ResponseEntity<PingResponseTO> handleErrors(
             RuntimeException ex, WebRequest request) {
 
         PingResponseTO failedResponse = new PingResponseTO(STATUS.ERROR,ex.getMessage());
         return new ResponseEntity<>( failedResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    @ExceptionHandler(value
+            = { NotAuthorizedException.class })
+    protected ResponseEntity<PingResponseTO> handleUnauthorized(
+            NotAuthorizedException ex, WebRequest request) {
+
+        PingResponseTO failedResponse = new PingResponseTO(STATUS.FAIL,ex.getMessage());
+        return new ResponseEntity<>( failedResponse, HttpStatus.UNAUTHORIZED);
     }
 
 }
