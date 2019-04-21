@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static com.murk.telegram.ping.handler.core.model.RequestModelConstants.*;
 import static com.murk.telegram.ping.handler.core.controller.ControllerTestHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;

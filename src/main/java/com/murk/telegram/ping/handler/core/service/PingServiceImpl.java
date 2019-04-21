@@ -24,12 +24,12 @@ public class PingServiceImpl implements PingService {
         PingResponseTO authorization;
         try {
             ValidationUtil.validate(clientKey,moduleName,processName);
+            authorization = cache.authorize(clientKey,moduleName,processName,checkTime);
 
         } catch (RuntimeException e) {
             log.warn("Authorization is fail, clineKey={}, cause={}",clientKey,e.getMessage());
             throw e;
         }
-        authorization = cache.authorize(clientKey,moduleName,processName,checkTime);
 
         return authorization;
     }
@@ -39,11 +39,12 @@ public class PingServiceImpl implements PingService {
         PingResponseTO ping;
         try {
             ValidationUtil.validate(clientKey,moduleName,processName);
+            ping = cache.ping(clientKey,moduleName,processName);
+
         } catch (RuntimeException e) {
             log.warn("Ping is fail, clineKey={}, cause={}",clientKey,e.getMessage());
             throw e;
         }
-        ping = cache.ping(clientKey,moduleName,processName);
 
         return ping;
     }
