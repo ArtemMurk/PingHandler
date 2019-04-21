@@ -23,7 +23,7 @@ public class PingRestController {
     public ResponseEntity<PingResponseTO> authorization(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
     {
         PingResponseTO authorizationResponse = service.authorization(clientKey,moduleName,processName);
-        return new ResponseEntity<>(authorizationResponse, HttpStatus.OK);
+        return new ResponseEntity<>(authorizationResponse, HttpStatus.CREATED);
     }
 
 
@@ -36,11 +36,20 @@ public class PingRestController {
 
     @ExceptionHandler(value
             = { IllegalArgumentException.class, IllegalStateException.class })
-    protected ResponseEntity<PingResponseTO> handleConflict(
+    protected ResponseEntity<PingResponseTO> handleValidation(
             RuntimeException ex, WebRequest request) {
 
         PingResponseTO failedResponse = new PingResponseTO(STATUS.FAIL,ex.getMessage());
         return new ResponseEntity<>( failedResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(value
+            = { Exception.class })
+    protected ResponseEntity<PingResponseTO> handleErrors(
+            RuntimeException ex, WebRequest request) {
+
+        PingResponseTO failedResponse = new PingResponseTO(STATUS.ERROR,ex.getMessage());
+        return new ResponseEntity<>( failedResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

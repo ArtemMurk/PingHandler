@@ -57,7 +57,7 @@ public class PingRestControllerTest {
         when(service.authorization(clientKey,moduleName,processName)).thenReturn(pingResponseTO);
 
          mockMvc.perform(post("/rest/authorization?clientKey="+clientKey+"&moduleName="+moduleName+"&"+"processName="+processName))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("status", is(STATUS.SUCCESS.name())))
                 .andExpect(jsonPath("message", is(processName)));
 
@@ -121,6 +121,26 @@ public class PingRestControllerTest {
         mockMvc.perform(post("/rest/authorization?clientKey="+clientKey+"&moduleName="+moduleName+"&"+"processName="+processName))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("status", is(STATUS.FAIL.name())))
+                .andExpect(jsonPath("message", is(exceptionMessage)));
+
+        verify(service, times(1)).authorization(clientKey,moduleName,processName);
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    public void internalServerErrors() throws Exception
+    {
+        String clientKey = "client id mock";
+        String moduleName = "module name mock";
+        String processName = "process name mock";
+
+        String exceptionMessage = "Big error";
+
+        when(service.authorization(clientKey,moduleName,processName)).thenThrow(new RuntimeException(exceptionMessage));
+
+        mockMvc.perform(post("/rest/authorization?clientKey="+clientKey+"&moduleName="+moduleName+"&"+"processName="+processName))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("status", is(STATUS.ERROR.name())))
                 .andExpect(jsonPath("message", is(exceptionMessage)));
 
         verify(service, times(1)).authorization(clientKey,moduleName,processName);
