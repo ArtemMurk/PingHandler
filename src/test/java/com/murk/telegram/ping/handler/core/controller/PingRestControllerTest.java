@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import org.mockito.MockitoAnnotations;
 
-
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -30,7 +29,7 @@ public class PingRestControllerTest {
     private PingRestController controller;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         service = mock(PingService.class);
         controller = new PingRestController(service);
 

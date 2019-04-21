@@ -1,5 +1,6 @@
 package com.murk.telegram.ping.handler.core.utils;
 
+
 public class ValidationUtil {
 
     public static final String PARAMS_IS_EMPTY = "params can't be empty";
@@ -12,7 +13,7 @@ public class ValidationUtil {
         }
     }
 
-    public static void validate(String param)
+    private static void validate(String param)
     {
         checkNull(param);
         checkIllegalSymbols(param);
