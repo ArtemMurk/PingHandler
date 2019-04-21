@@ -21,43 +21,44 @@ public class PingRestController {
     }
 
     @RequestMapping(value = "/rest/authorization", method = RequestMethod.POST)
-    public ResponseEntity<PingResponseTO> authorization(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
+    public ResponseEntity<PingResponseTO> authorization(@RequestParam("clientKey") String clientKey,
+                                                        @RequestParam("moduleName") String moduleName,
+                                                        @RequestParam("processName") String processName,
+                                                        @RequestParam("checkTime") long checkTime )
     {
-        PingResponseTO authorizationResponse = service.authorization(clientKey,moduleName,processName);
+        PingResponseTO authorizationResponse = service.authorization(clientKey,moduleName,processName,checkTime);
         return new ResponseEntity<>(authorizationResponse, HttpStatus.CREATED);
     }
 
 
     @RequestMapping(value = "/rest/ping", method = RequestMethod.POST)
-    public ResponseEntity<PingResponseTO> ping(@RequestParam("clientKey") String clientKey, @RequestParam("moduleName") String moduleName, @RequestParam("processName") String processName )
+    public ResponseEntity<PingResponseTO> ping(@RequestParam("clientKey") String clientKey,
+                                               @RequestParam("moduleName") String moduleName,
+                                               @RequestParam("processName") String processName )
     {
         PingResponseTO pingResponse = service.ping(clientKey,moduleName,processName);
         return new ResponseEntity<>(pingResponse, HttpStatus.OK);
     }
 
-    @ExceptionHandler(value
-            = { IllegalArgumentException.class, IllegalStateException.class })
-    protected ResponseEntity<PingResponseTO> handleValidation(
-            RuntimeException ex, WebRequest request) {
+    @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
+    protected ResponseEntity<PingResponseTO> handleValidation(RuntimeException ex, WebRequest request) {
 
         PingResponseTO failedResponse = new PingResponseTO(STATUS.FAIL,ex.getMessage());
         return new ResponseEntity<>( failedResponse, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(value
-            = { RuntimeException.class })
-    protected ResponseEntity<PingResponseTO> handleErrors(
-            RuntimeException ex, WebRequest request) {
+    @ExceptionHandler(value = { RuntimeException.class })
+    protected ResponseEntity<PingResponseTO> handleErrors(RuntimeException ex, WebRequest request)
+    {
 
         PingResponseTO failedResponse = new PingResponseTO(STATUS.ERROR,ex.getMessage());
         return new ResponseEntity<>( failedResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
-    @ExceptionHandler(value
-            = { NotAuthorizedException.class })
-    protected ResponseEntity<PingResponseTO> handleUnauthorized(
-            NotAuthorizedException ex, WebRequest request) {
+    @ExceptionHandler(value = { NotAuthorizedException.class })
+    protected ResponseEntity<PingResponseTO> handleUnauthorized(NotAuthorizedException ex, WebRequest request)
+    {
 
         PingResponseTO failedResponse = new PingResponseTO(STATUS.FAIL,ex.getMessage());
         return new ResponseEntity<>( failedResponse, HttpStatus.UNAUTHORIZED);
