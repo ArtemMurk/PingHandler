@@ -1,7 +1,11 @@
 package com.murk.telegram.ping.handler.core.service;
 
 import com.murk.telegram.ping.handler.core.cache.PingCache;
+import com.murk.telegram.ping.handler.core.exception.ClientNotFoundException;
+import com.murk.telegram.ping.handler.core.exception.NotAuthorizedException;
+import com.murk.telegram.ping.handler.core.model.ProcessInformation;
 import com.murk.telegram.ping.handler.core.to.PingResponseTO;
+import com.murk.telegram.ping.handler.core.to.STATUS;
 import com.murk.telegram.ping.handler.core.utils.ValidationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +25,24 @@ public class PingServiceImpl implements PingService {
 
     @Override
     public PingResponseTO authorization(String clientKey, String moduleName, String processName, long checkTime) {
-        PingResponseTO authorization;
+        PingResponseTO authorization  = new PingResponseTO(STATUS.SUCCESS,processName);
         try {
             ValidationUtil.validate(clientKey,moduleName,processName);
-            authorization = cache.authorize(clientKey,moduleName,processName,checkTime);
 
+            if (cache.containsClient(clientKey)){
+                ProcessInformation processInformation = cache.getProcessInformation(clientKey,moduleName,processName);
+                if (processInformation == null || processInformation.getCheckTime() != checkTime)
+                {
+                    processInformation.setCheckTime(checkTime);
+                    processInformation.setLastPingTime(System.currentTimeMillis());
+                    cache.putProcessInformation(clientKey,moduleName,processInformation);
+                }
+            } else
+            {
+                throw new ClientNotFoundException("Client not found");
+            }
         } catch (RuntimeException e) {
-            log.warn("Authorization is fail, clineKey={}, cause={}",clientKey,e.getMessage());
+            log.error("Authorization is fail, clineKey={}, cause={}",clientKey,e.getMessage());
             throw e;
         }
 
@@ -36,13 +51,19 @@ public class PingServiceImpl implements PingService {
 
     @Override
     public PingResponseTO ping(String clientKey, String moduleName, String processName) {
-        PingResponseTO ping;
+        PingResponseTO ping = new PingResponseTO(STATUS.SUCCESS,processName);
         try {
             ValidationUtil.validate(clientKey,moduleName,processName);
-            ping = cache.ping(clientKey,moduleName,processName);
-
+            if (cache.containsProcess(clientKey,moduleName,processName))
+            {
+                cache.putPing(clientKey,moduleName,processName);
+            }
+            else
+                {
+                    throw new NotAuthorizedException("Not authorized ping for process"+ processName);
+                }
         } catch (RuntimeException e) {
-            log.warn("Ping is fail, clineKey={}, cause={}",clientKey,e.getMessage());
+            log.error("Ping is fail, clineKey={}, cause={}",clientKey,e.getMessage());
             throw e;
         }
 
