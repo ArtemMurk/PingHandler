@@ -33,8 +33,7 @@ public class PingServiceImpl implements PingService {
                 ProcessInformation processInformation = cache.getProcessInformation(clientKey,moduleName,processName);
                 if (processInformation == null || processInformation.getCheckTime() != checkTime)
                 {
-                    processInformation.setCheckTime(checkTime);
-                    processInformation.setLastPingTime(System.currentTimeMillis());
+                    processInformation = new ProcessInformation(processName,checkTime,System.currentTimeMillis());
                     cache.putProcessInformation(clientKey,moduleName,processInformation);
                 }
             } else

@@ -14,4 +14,10 @@ public class ProcessInformation {
         this.checkTime = checkTime;
         lastPingTime = System.currentTimeMillis();
     }
+
+    public ProcessInformation(@NonNull String name, @NonNull long checkTime, @NonNull long lastPingTime) {
+        this.name = name;
+        this.checkTime = checkTime;
+        this.lastPingTime = lastPingTime;
+    }
 }
