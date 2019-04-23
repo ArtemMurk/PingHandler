@@ -15,4 +15,5 @@ public interface PingCache {
     void putProcessInformation(String clientKey, String moduleName, ProcessInformation processInformation);
 
     void putPing(String clientKey, String moduleName, String processName);
+    void initCaches();
 }

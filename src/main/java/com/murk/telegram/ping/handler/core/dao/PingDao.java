@@ -1,4 +1,10 @@
 package com.murk.telegram.ping.handler.core.dao;
 
-public interface PingDao {
+import com.murk.telegram.ping.handler.core.model.ClientInformation;
+
+import java.util.Map;
+
+public interface  PingDao {
+    Map<String, ClientInformation> getAllClients();
+
 }
