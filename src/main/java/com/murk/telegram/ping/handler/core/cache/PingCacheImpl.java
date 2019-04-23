@@ -1,6 +1,8 @@
 package com.murk.telegram.ping.handler.core.cache;
 
 import com.murk.telegram.ping.handler.core.dao.PingDao;
+import com.murk.telegram.ping.handler.core.exception.ClientNotFoundException;
+import com.murk.telegram.ping.handler.core.exception.NotAuthorizedException;
 import com.murk.telegram.ping.handler.core.model.ClientInformation;
 import com.murk.telegram.ping.handler.core.model.ModuleInformation;
 import com.murk.telegram.ping.handler.core.model.Ping;
@@ -21,9 +23,6 @@ public class PingCacheImpl implements PingCache {
 
     private Map<String, ClientInformation> pingCache = new ConcurrentHashMap<>();
 
-    private Map<String,ClientInformation> tmpModuleInfoCache = new ConcurrentHashMap<>();
-    private Map<Ping,Long> tmpPingCache = new ConcurrentHashMap<>();
-
     private PingDao dao;
 
     @Autowired
@@ -32,11 +31,9 @@ public class PingCacheImpl implements PingCache {
     }
 
     @PostConstruct
-    @Override
-    public void initCaches()
+    private void initCaches()
     {
-        Map<String,ClientInformation> test = dao.getAllClients();
-        log.warn("test = {}",test);
+        pingCache = dao.getAllClients();
     }
 
     @Override
@@ -89,9 +86,12 @@ public class PingCacheImpl implements PingCache {
             }
             module.setProcess(process);
             client.setModule(module);
-        }
+        } else
+            {
+                throw new ClientNotFoundException("Client not found");
+            }
 
-        putInfoTmpDaoCache(clientKey,moduleName,process);
+        dao.saveProcess(clientKey,moduleName,process);
     }
 
     @Override
@@ -101,32 +101,13 @@ public class PingCacheImpl implements PingCache {
         if (process!= null)
         {
             process.setLastPingTime(System.currentTimeMillis());
-        }
-        putPingTmpDaoCache(clientKey,moduleName,processName);
+        } else
+            {
+                throw new NotAuthorizedException("Not authorized ping for process"+ processName);
+            }
 
+        Ping ping = new Ping(clientKey,moduleName,processName);
+        dao.savePing(ping);
     }
-
-
-
-    private void putInfoTmpDaoCache(String clientKey, String moduleName, ProcessInformation process)
-    {
-        ClientInformation client = tmpModuleInfoCache.getOrDefault(clientKey, new ClientInformation(clientKey));
-        ModuleInformation module = client.getModule(moduleName);
-        if (module == null)
-        {
-            module = new ModuleInformation(moduleName);
-        }
-
-        module.setProcess(process);
-        client.setModule(module);
-        tmpModuleInfoCache.put(clientKey,client);
-    }
-
-    private void putPingTmpDaoCache(String clientKey, String moduleName, String processName)
-    {
-        long pingTime = System.currentTimeMillis();
-        tmpPingCache.put(new Ping(clientKey,moduleName,processName),pingTime);
-    }
-
 
 }
