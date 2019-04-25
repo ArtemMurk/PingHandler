@@ -53,16 +53,16 @@ public class PingRestControllerTest {
     public void authorizationSuccess() throws Exception{
 
 
-        PingResponseTO pingResponseTO = new PingResponseTO(STATUS.SUCCESS,PROCESS_NAME);
+        PingResponseTO pingResponseTO = new PingResponseTO(STATUS.SUCCESS, PROCESS_NAME_1);
 
-        when(service.authorization(CLIENT_KEY,MODULE_NAME,PROCESS_NAME,CHECK_TIME)).thenReturn(pingResponseTO);
+        when(service.authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1,CHECK_TIME)).thenReturn(pingResponseTO);
 
          mockMvc.perform(post(AUTHORIZATION_URI_TEMPLATE))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("status", is(STATUS.SUCCESS.name())))
-                .andExpect(jsonPath("message", is(PROCESS_NAME)));
+                .andExpect(jsonPath("message", is(PROCESS_NAME_1)));
 
-        verify(service, times(1)).authorization(CLIENT_KEY,MODULE_NAME,PROCESS_NAME,CHECK_TIME);
+        verify(service, times(1)).authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1,CHECK_TIME);
         verifyNoMoreInteractions(service);
     }
 
@@ -70,16 +70,16 @@ public class PingRestControllerTest {
     @Test
     public void pingSuccess() throws Exception {
 
-        PingResponseTO pingResponseTO = new PingResponseTO(STATUS.SUCCESS,PROCESS_NAME);
+        PingResponseTO pingResponseTO = new PingResponseTO(STATUS.SUCCESS, PROCESS_NAME_1);
 
-        when(service.ping(CLIENT_KEY,MODULE_NAME,PROCESS_NAME)).thenReturn(pingResponseTO);
+        when(service.ping(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1)).thenReturn(pingResponseTO);
 
         mockMvc.perform(post(PING_URI_TEMPLATE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("status", is(STATUS.SUCCESS.name())))
-                .andExpect(jsonPath("message", is(PROCESS_NAME)));
+                .andExpect(jsonPath("message", is(PROCESS_NAME_1)));
 
-        verify(service, times(1)).ping(CLIENT_KEY,MODULE_NAME,PROCESS_NAME);
+        verify(service, times(1)).ping(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
         verifyNoMoreInteractions(service);
     }
 
@@ -87,14 +87,14 @@ public class PingRestControllerTest {
     public void pingFail() throws Exception
     {
 
-        when(service.ping(CLIENT_KEY,MODULE_NAME,PROCESS_NAME)).thenThrow(new IllegalArgumentException(EXCEPTION_MESSAGE));
+        when(service.ping(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1)).thenThrow(new IllegalArgumentException(EXCEPTION_MESSAGE));
 
         mockMvc.perform(post(PING_URI_TEMPLATE))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("status", is(STATUS.FAIL.name())))
                 .andExpect(jsonPath("message", is(EXCEPTION_MESSAGE)));
 
-        verify(service, times(1)).ping(CLIENT_KEY,MODULE_NAME,PROCESS_NAME);
+        verify(service, times(1)).ping(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
         verifyNoMoreInteractions(service);
     }
 
@@ -102,14 +102,14 @@ public class PingRestControllerTest {
     public void authorizationFail() throws Exception
     {
 
-        when(service.authorization(CLIENT_KEY,MODULE_NAME,PROCESS_NAME,CHECK_TIME)).thenThrow(new IllegalArgumentException(EXCEPTION_MESSAGE));
+        when(service.authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1,CHECK_TIME)).thenThrow(new IllegalArgumentException(EXCEPTION_MESSAGE));
 
         mockMvc.perform(post(AUTHORIZATION_URI_TEMPLATE))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("status", is(STATUS.FAIL.name())))
                 .andExpect(jsonPath("message", is(EXCEPTION_MESSAGE)));
 
-        verify(service, times(1)).authorization(CLIENT_KEY,MODULE_NAME,PROCESS_NAME,CHECK_TIME);
+        verify(service, times(1)).authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1,CHECK_TIME);
         verifyNoMoreInteractions(service);
     }
 
@@ -117,14 +117,14 @@ public class PingRestControllerTest {
     public void internalServerErrors() throws Exception
     {
 
-        when(service.authorization(CLIENT_KEY,MODULE_NAME,PROCESS_NAME, CHECK_TIME)).thenThrow(new RuntimeException(EXCEPTION_MESSAGE));
+        when(service.authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1, CHECK_TIME)).thenThrow(new RuntimeException(EXCEPTION_MESSAGE));
 
         mockMvc.perform(post(AUTHORIZATION_URI_TEMPLATE))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("status", is(STATUS.ERROR.name())))
                 .andExpect(jsonPath("message", is(EXCEPTION_MESSAGE)));
 
-        verify(service, times(1)).authorization(CLIENT_KEY,MODULE_NAME,PROCESS_NAME, CHECK_TIME);
+        verify(service, times(1)).authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1, CHECK_TIME);
         verifyNoMoreInteractions(service);
     }
 
@@ -132,14 +132,14 @@ public class PingRestControllerTest {
     public void notAuthorizedModule() throws Exception
     {
 
-        when(service.ping(CLIENT_KEY, MODULE_NAME, PROCESS_NAME)).thenThrow(new NotAuthorizedException(EXCEPTION_MESSAGE));
+        when(service.ping(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1)).thenThrow(new NotAuthorizedException(EXCEPTION_MESSAGE));
 
         mockMvc.perform(post(PING_URI_TEMPLATE))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("status", is(STATUS.FAIL.name())))
                 .andExpect(jsonPath("message", is(EXCEPTION_MESSAGE)));
 
-        verify(service, times(1)).ping(CLIENT_KEY, MODULE_NAME, PROCESS_NAME);
+        verify(service, times(1)).ping(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
         verifyNoMoreInteractions(service);
     }
 
