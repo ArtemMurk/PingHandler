@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PingCacheImpl implements PingCache {
 
 
-    private Map<String, ClientInformation> pingCache = new ConcurrentHashMap<>();
+    private Map<String, ClientInformation> cache = new ConcurrentHashMap<>();
 
     private PingDao dao;
 
@@ -33,13 +33,14 @@ public class PingCacheImpl implements PingCache {
     @PostConstruct
     private void initCaches()
     {
-        pingCache = dao.getAllClients();
+        cache = dao.getAllClients();
+        log.info("init clients caches success");
     }
 
     @Override
     public boolean containsClient(String clientId)
     {
-        return pingCache.containsKey(clientId);
+        return cache.containsKey(clientId);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class PingCacheImpl implements PingCache {
     {
         boolean contains = false;
         ProcessInformation result = null;
-        ClientInformation clientInformation = pingCache.get(clientKey);
+        ClientInformation clientInformation = cache.get(clientKey);
         if (clientInformation != null) {
             Map<String, ModuleInformation> modules = clientInformation.getModules();
             ModuleInformation module = modules.get(moduleName);
@@ -63,7 +64,7 @@ public class PingCacheImpl implements PingCache {
     public ProcessInformation getProcessInformation(String clientKey, String moduleName, String processName)
     {
         ProcessInformation result = null;
-        ClientInformation clientInformation = pingCache.get(clientKey);
+        ClientInformation clientInformation = cache.get(clientKey);
         if (clientInformation != null) {
             Map<String, ModuleInformation> modules = clientInformation.getModules();
             ModuleInformation module = modules.get(moduleName);
@@ -78,7 +79,7 @@ public class PingCacheImpl implements PingCache {
     @Override
     public void putProcessInformation(String clientKey, String moduleName, ProcessInformation process)
     {
-        ClientInformation client = pingCache.get(clientKey);
+        ClientInformation client = cache.get(clientKey);
         if (client != null) {
             ModuleInformation module = client.getModule(moduleName);
             if (module == null) {
@@ -88,6 +89,7 @@ public class PingCacheImpl implements PingCache {
             client.setModule(module);
         } else
             {
+                log.error("Client not found  clientKey = {}, moduleName = {}, processName = {}",clientKey,moduleName,process.getName());
                 throw new ClientNotFoundException("Client not found");
             }
 
@@ -103,6 +105,7 @@ public class PingCacheImpl implements PingCache {
             process.setLastPingTime(System.currentTimeMillis());
         } else
             {
+                log.error("Not authorized ping for process = {}, clientKey = {}, moduleName = {}",processName,clientKey,moduleName);
                 throw new NotAuthorizedException("Not authorized ping for process"+ processName);
             }
 
