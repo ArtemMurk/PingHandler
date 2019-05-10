@@ -1,4 +1,4 @@
-#Ping Handler
+# Ping Handler
 
 | Technology     | Badge |
 |:--------------:|:-----:|
@@ -20,7 +20,7 @@ Build command.
 > mvn clean package
 
 ## Database
-![db scheme](https://github.com/ArtemMurk/TelegramPingHandlerCore/blob/master/DBScheme.png])
+![db scheme](https://github.com/ArtemMurk/TelegramPingHandlerCore/blob/master/DBScheme.png)
 
 ## Contact Information
 If you have any questions I'd be happy to answer it.
