@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static javax.management.timer.Timer.ONE_HOUR;
+
 /**
  * Created by win1.
  */
@@ -61,7 +63,7 @@ public class WeakConcurrentHashMap<K, V> extends ConcurrentHashMap<K, V>
             while (true) {
                 cleanMap();
                 try {
-                    Thread.sleep(expiryInMillis / 2);
+                    Thread.sleep(ONE_HOUR);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
