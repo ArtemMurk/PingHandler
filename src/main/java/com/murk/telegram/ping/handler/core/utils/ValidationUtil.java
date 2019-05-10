@@ -12,7 +12,7 @@ public class ValidationUtil {
     private static final int MODEULE_KEY_LENGTH = 32;
 
     private static final String PROJECT_NAME_PATTERN = "[0-9a-zA-Z_]+";
-    private static final String MODEULE_KEY_MD5_PATTERN = "[a-fA-F0-9]";
+    private static final String MODEULE_KEY_MD5_PATTERN = "[a-fA-F0-9]+";
 
 
     public static void validate(String projectName, String moduleKey)
