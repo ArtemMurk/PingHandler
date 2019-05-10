@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 
@@ -18,14 +19,26 @@ import java.util.Map;
 @Slf4j
 public class PingServiceImpl implements PingService {
 
+    private static final PingTO PING_SUCCESS  = new PingTO(STATUS.SUCCESS,"success ping");
+
     private PingDao dao;
-    private Map<String, Project> projects;
+    private Map<String, Project> cache;
 
     @Autowired
-    public PingServiceImpl(PingDao dao, WeakConcurrentHashMap<String,Project> projects)
+    public PingServiceImpl(PingDao dao, WeakConcurrentHashMap<String,Project> cache)
     {
         this.dao = dao;
-        this.projects = projects;
+        this.cache = cache;
+    }
+
+    @PostConstruct
+    private void initCaches()
+    {
+        Map<String,Project> allProjects = dao.getAllProjects();
+        if (allProjects!= null)
+        {
+            cache.putAll(allProjects);
+        }
     }
 
 
@@ -42,12 +55,12 @@ public class PingServiceImpl implements PingService {
             }
 
         log.info("Ping project{}, mkey={}",projectName,moduleKey);
-        return new PingTO(STATUS.SUCCESS,"success ping");
+        return PING_SUCCESS;
     }
 
     private boolean cacheContains(String projectName, String moduleKey) {
         boolean moduleExist = false;
-        Project project = projects.get(projectName);
+        Project project = cache.get(projectName);
         if (project != null)
         {
             if (project.containsModule(moduleKey))
@@ -68,7 +81,7 @@ public class PingServiceImpl implements PingService {
             if (projectFromDao!= null)
             {
                 moduleExist = true;
-                projects.put(projectName,projectFromDao);
+                cache.put(projectName,projectFromDao);
             }
         }
 
