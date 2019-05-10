@@ -5,8 +5,8 @@ public class ValidationUtil {
 
     public static final String PARAMS_IS_EMPTY = "params can't be empty";
     public static final String PARAMS_CONTAINS_NOT_VALID_SYMBOLS = "not valid symbols in your params";
-    public static final String PARAMS_IS_TOO_LONG = "not valid length in your param";
-    public static final String ILLEGAL_MODULE_KEY = "Illegal module key length";
+    public static final String ILLEGAL_PROJECT_NAME_LENGTH = "not valid length in your param";
+    public static final String ILLEGAL_MODULE_KEY_LENGTH = "Illegal module key length";
 
     private static final int PROJECT_NAME_LENGTH = 50;
     private static final int MODEULE_KEY_LENGTH = 32;
@@ -51,7 +51,7 @@ public class ValidationUtil {
     private static void checkProjectLength(String param) {
         if (param.length()>PROJECT_NAME_LENGTH)
         {
-            throw new IllegalArgumentException(PARAMS_IS_TOO_LONG);
+            throw new IllegalArgumentException(ILLEGAL_PROJECT_NAME_LENGTH);
         }
     }
 
@@ -59,7 +59,7 @@ public class ValidationUtil {
     {
         if (moduleKey.length()!= MODEULE_KEY_LENGTH)
         {
-            throw new IllegalArgumentException(ILLEGAL_MODULE_KEY);
+            throw new IllegalArgumentException(ILLEGAL_MODULE_KEY_LENGTH);
         }
     }
 }

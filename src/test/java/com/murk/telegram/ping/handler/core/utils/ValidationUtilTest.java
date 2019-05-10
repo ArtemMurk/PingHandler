@@ -14,9 +14,19 @@ public class ValidationUtilTest {
     }
 
     @Test()
-    public void containsNotValidSymbols() {
+    public void projectNameContainsNotValidSymbols() {
         try {
-            ValidationUtil.validate("NOT VALID.$3@","NOT VALID.$3@");
+            ValidationUtil.validate("f@345",MODULE_KEY_1);
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(),ValidationUtil.PARAMS_CONTAINS_NOT_VALID_SYMBOLS);
+        }
+    }
+
+
+    @Test()
+    public void moduleKeyContainsNotValidSymbols() {
+        try {
+            ValidationUtil.validate(PROJECT_NAME_1,"123456789azxcvasdfqwertyhgfdsaww");
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(),ValidationUtil.PARAMS_CONTAINS_NOT_VALID_SYMBOLS);
         }
@@ -32,11 +42,20 @@ public class ValidationUtilTest {
     }
 
     @Test()
-    public void tooLongParam() {
+    public void tooLongParamProjName() {
         try {
             ValidationUtil.validate("toooooooooooooooooooooooooooooooolooooooooooooooooooooooooonnnnnnnnnnngggggggggggggg", MODULE_KEY_1);
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(),ValidationUtil.PARAMS_IS_TOO_LONG);
+            assertEquals(e.getMessage(),ValidationUtil.ILLEGAL_PROJECT_NAME_LENGTH);
+        }
+    }
+
+    @Test()
+    public void moduleKeyHasWrongSize() {
+        try {
+            ValidationUtil.validate(PROJECT_NAME_1, "111");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(),ValidationUtil.ILLEGAL_MODULE_KEY_LENGTH);
         }
     }
 }
