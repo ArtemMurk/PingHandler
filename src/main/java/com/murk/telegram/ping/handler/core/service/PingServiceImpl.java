@@ -1,71 +1,75 @@
 package com.murk.telegram.ping.handler.core.service;
 
-import com.murk.telegram.ping.handler.core.cache.PingCache;
-import com.murk.telegram.ping.handler.core.exception.ClientNotFoundException;
-import com.murk.telegram.ping.handler.core.exception.NotAuthorizedException;
-import com.murk.telegram.ping.handler.core.model.ProcessInformation;
-import com.murk.telegram.ping.handler.core.to.PingResponseTO;
+import com.murk.telegram.ping.handler.core.dao.PingDao;
+import com.murk.telegram.ping.handler.core.exception.NotFindModuleException;
+import com.murk.telegram.ping.handler.core.model.Project;
+import com.murk.telegram.ping.handler.core.to.PingTO;
 import com.murk.telegram.ping.handler.core.to.STATUS;
 import com.murk.telegram.ping.handler.core.utils.ValidationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 @Service
 @Slf4j
 public class PingServiceImpl implements PingService {
 
-    private PingCache cache;
+    private PingDao dao;
+    private Map<String, Project> projects = new ConcurrentHashMap<>();
 
     @Autowired
-    public PingServiceImpl(PingCache cache) {
-        this.cache = cache;
+    public PingServiceImpl(PingDao dao) {
+        this.dao = dao;
     }
 
-    @Override
-    public PingResponseTO authorization(String clientKey, String moduleName, String processName, long checkTime) {
-        PingResponseTO authorization  = new PingResponseTO(STATUS.SUCCESS,processName);
-        try {
-            ValidationUtil.validate(clientKey,moduleName,processName);
 
-            if (cache.containsClient(clientKey)){
-                ProcessInformation processInformation = cache.getProcessInformation(clientKey,moduleName,processName);
-                if (processInformation == null || processInformation.getCheckTime() != checkTime)
-                {
-                    processInformation = new ProcessInformation(processName,checkTime,System.currentTimeMillis());
-                    cache.putProcessInformation(clientKey,moduleName,processInformation);
-                }
+    @Override
+    public PingTO ping(String projectName, String moduleKey) {
+        ValidationUtil.validate(projectName,moduleKey);
+
+        if (cacheContains(projectName,moduleKey))
+        {
+            dao.ping(projectName,moduleKey);
+        } else
+            {
+                throw  new NotFindModuleException("Not find module for "+projectName);
+            }
+
+        log.info("Ping project{}, mkey={}",projectName,moduleKey);
+        return new PingTO(STATUS.SUCCESS,"success ping");
+    }
+
+    private boolean cacheContains(String projectName, String moduleKey) {
+        boolean moduleExist = false;
+        Project project = projects.get(projectName);
+        if (project != null)
+        {
+            if (project.containsModule(moduleKey))
+            {
+                moduleExist = true;
             } else
-            {
-                throw new ClientNotFoundException("Client not found");
-            }
-        } catch (RuntimeException e) {
-            log.error("Authorization is fail, clineKey={}, cause={}",clientKey,e.getMessage());
-            throw e;
-        }
-
-        return authorization;
-    }
-
-    @Override
-    public PingResponseTO ping(String clientKey, String moduleName, String processName) {
-        PingResponseTO ping = new PingResponseTO(STATUS.SUCCESS,processName);
-        try {
-            ValidationUtil.validate(clientKey,moduleName,processName);
-            if (cache.containsProcess(clientKey,moduleName,processName))
-            {
-                cache.putPing(clientKey,moduleName,processName);
-            }
-            else
                 {
-                    throw new NotAuthorizedException("Not authorized ping for process"+ processName);
+                    Project projectFromDao = dao.getProjInfo(projectName,moduleKey);
+                    if (projectFromDao!= null)
+                    {
+                        moduleExist = true;
+                        project.setModule(moduleKey);
+                    }
                 }
-        } catch (RuntimeException e) {
-            log.error("Ping is fail, clineKey={}, cause={}",clientKey,e.getMessage());
-            throw e;
+        } else
+        {
+            Project projectFromDao = dao.getProjInfo(projectName,moduleKey);
+            if (projectFromDao!= null)
+            {
+                moduleExist = true;
+                projects.put(projectName,projectFromDao);
+            }
         }
 
-        return ping;
+        return moduleExist;
     }
 }

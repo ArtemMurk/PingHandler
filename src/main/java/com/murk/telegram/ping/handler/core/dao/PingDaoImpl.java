@@ -1,52 +1,31 @@
 package com.murk.telegram.ping.handler.core.dao;
 
-import com.murk.telegram.ping.handler.core.model.ClientInformation;
-import com.murk.telegram.ping.handler.core.model.ModuleInformation;
-import com.murk.telegram.ping.handler.core.model.Ping;
-import com.murk.telegram.ping.handler.core.model.ProcessInformation;
+import com.murk.telegram.ping.handler.core.model.Project;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@Slf4j
 public class PingDaoImpl  implements PingDao{
 
-    private Map<String,ClientInformation> clientCache = new ConcurrentHashMap<>();
-    private Map<Ping,Long> pingCache = new ConcurrentHashMap<>();
-
     @Override
-    public Map<String, ClientInformation> getAllClients() {
+    public Map<String, Project> getAllProjects() {
+        // TODO: 25.04.2019
         return null;
     }
 
     @Override
-    public void saveProcess(String clientName, String moduleName, ProcessInformation process)
-    {
-        ClientInformation client = clientCache.getOrDefault(clientName, new ClientInformation(clientName));
-        ModuleInformation module = client.getModule(moduleName);
-        if (module == null)
-        {
-            module = new ModuleInformation(moduleName);
-        }
-
-        module.setProcess(process);
-        client.setModule(module);
-        clientCache.put(clientName,client);
+    public Project getProjInfo(String projectName, String moduleKey) {
+        // TODO: 10.05.2019
+        return null;
     }
 
     @Override
-    public void savePing(Ping ping)
-    {
-        long pingTime = System.currentTimeMillis();
-        pingCache.put(ping,pingTime);
+    public void ping(String prjectName, String moduleKey) {
+        // TODO: 10.05.2019
     }
 
-    private class SaveDaoProcess implements Runnable
-    {
-        @Override
-        public void run() {
-
-        }
-    }
 }

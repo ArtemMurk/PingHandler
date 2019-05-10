@@ -1,15 +1,15 @@
 package com.murk.telegram.ping.handler.core.dao;
 
-import com.murk.telegram.ping.handler.core.model.ClientInformation;
-import com.murk.telegram.ping.handler.core.model.Ping;
-import com.murk.telegram.ping.handler.core.model.ProcessInformation;
+import com.murk.telegram.ping.handler.core.model.Project;
+
 
 import java.util.Map;
 
 public interface  PingDao {
-    Map<String, ClientInformation> getAllClients();
+    Map<String, Project> getAllProjects();
 
-    void saveProcess(String clientName, String moduleName, ProcessInformation process);
+    Project getProjInfo(String projectName, String moduleKey);
 
-    void savePing(Ping ping);
+    void ping(String prjectName, String moduleKey);
+
 }

@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @AllArgsConstructor
-public class PingResponseTO{
+public class PingTO {
     private @NonNull STATUS status;
     private @NonNull String message;
 }
