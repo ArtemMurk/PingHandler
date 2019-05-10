@@ -37,7 +37,7 @@ public class PingRestController {
 
         String messageError = ex.getMessage();
         log.warn(messageError);
-        PingTO failedResponse = new PingTO(STATUS.ERROR,messageError);
+        PingTO failedResponse = new PingTO(STATUS.FAIL,messageError);
         return new ResponseEntity<>( failedResponse, HttpStatus.FORBIDDEN);
     }
 
@@ -56,7 +56,7 @@ public class PingRestController {
     {
         String messageError = ex.getMessage();
         log.warn(messageError);
-        PingTO failedResponse = new PingTO(STATUS.ERROR,messageError);
+        PingTO failedResponse = new PingTO(STATUS.FAIL,messageError);
         return new ResponseEntity<>( failedResponse, HttpStatus.UNAUTHORIZED);
     }
 
