@@ -3,6 +3,7 @@
 | Technology     | Badge |
 |:--------------:|:-----:|
 | License        | [![LICENSE](https://img.shields.io/badge/LICENSE-Apache%202.0-blue.svg)](LICENSE) |
+| Travis CI      | [![Build Status](https://travis-ci.com/ArtemMurk/TelegramPingHandlerCore.svg?branch=master)](https://travis-ci.com/ArtemMurk/TelegramPingHandlerCore) |
 
 ## Project Information
 This project help to catch your project heartbeat. 
