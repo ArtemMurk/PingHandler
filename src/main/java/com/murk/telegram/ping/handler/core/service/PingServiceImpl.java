@@ -6,12 +6,12 @@ import com.murk.telegram.ping.handler.core.model.Project;
 import com.murk.telegram.ping.handler.core.to.PingTO;
 import com.murk.telegram.ping.handler.core.to.STATUS;
 import com.murk.telegram.ping.handler.core.utils.ValidationUtil;
+import com.murk.telegram.ping.handler.core.utils.WeakConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
@@ -19,11 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PingServiceImpl implements PingService {
 
     private PingDao dao;
-    private Map<String, Project> projects = new ConcurrentHashMap<>();
+    private Map<String, Project> projects;
 
     @Autowired
-    public PingServiceImpl(PingDao dao) {
+    public PingServiceImpl(PingDao dao, WeakConcurrentHashMap<String,Project> projects)
+    {
         this.dao = dao;
+        this.projects = projects;
     }
 
 
