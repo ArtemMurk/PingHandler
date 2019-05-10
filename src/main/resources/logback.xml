@@ -2,7 +2,7 @@
 
 <configuration>
     <!-- Path to data logs -->
-    <property name="LOG_PATH" value="${user.dir}/log/telegram/"/>
+    <property name="LOG_PATH" value="${user.dir}/log/pingHandler/"/>
 
     <!-- Name of logs files -->
     <property name="LOG_NAME" value="application.log"/>
