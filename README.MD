@@ -20,14 +20,40 @@ Build command.
 > mvn clean package
 
 ## Database
+
+#### Db scheme that use in project
+
 ![db scheme](https://github.com/ArtemMurk/TelegramPingHandlerCore/blob/master/DBScheme.png)
+
+## Technologies
+
+#### Serialization
+* Jackson
+
+#### Logging
+* Slf4j
+* Logback
+
+#### Test
+* JUnit
+* AssertJ
+* Mockito
+* Hamcrest
+* Spring Test
+* Jsonpath
+
+#### Spring
+* Spring MVC
+
+#### Other
+* Lombok
 
 ## Contact Information
 If you have any questions I'd be happy to answer it.
  
-* **Автор**: Артём Муравлёв
+* **Author**: Артём Муравлёв
 * **Linkeidn**: [My Linkeidn](https://linkedin.com/in/artem-muravlov)
 * **Telegram**: @artem_murk
-* **Почта**: muravlevars@gmail.com
+* **Mail**: muravlevars@gmail.com
 
 
