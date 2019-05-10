@@ -17,4 +17,7 @@
         <property name="favorPathExtension" value="false" />
     </bean>
 
+    <bean id="weakConcurentMap" class="com.murk.telegram.ping.handler.core.utils.WeakConcurrentHashMap">
+        <constructor-arg value="86400000"/>
+    </bean>
 </beans>
