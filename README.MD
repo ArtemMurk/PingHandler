@@ -1,5 +1,6 @@
 #Ping Handler
- Technology     | Badge |
+
+| Technology     | Badge |
 |:--------------:|:-----:|
 | License        | [![LICENSE](https://img.shields.io/badge/LICENSE-Apache%202.0-blue.svg)](LICENSE) |
 
@@ -19,7 +20,7 @@ Build command.
 > mvn clean package
 
 ## Database
-!(db scheme)[https://github.com/ArtemMurk/TelegramPingHandlerCore/blob/master/DBScheme.png]
+![db scheme](https://github.com/ArtemMurk/TelegramPingHandlerCore/blob/master/DBScheme.png])
 
 ## Contact Information
 If you have any questions I'd be happy to answer it.
