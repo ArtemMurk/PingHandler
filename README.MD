@@ -4,6 +4,7 @@
 |:--------------:|:-----:|
 | License        | [![LICENSE](https://img.shields.io/badge/LICENSE-Apache%202.0-blue.svg)](LICENSE) |
 | Travis CI      | [![Build Status](https://travis-ci.com/ArtemMurk/TelegramPingHandlerCore.svg?branch=master)](https://travis-ci.com/ArtemMurk/TelegramPingHandlerCore) |
+| Codacy         | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/eeb38bbb83b34b99b0ce1488db2aee75)](https://www.codacy.com/app/ArtemMurk/PingHandlerCore?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ArtemMurk/PingHandlerCore&amp;utm_campaign=Badge_Grade) |
 
 ## Project Information
 This project help to catch your project heartbeat. 
