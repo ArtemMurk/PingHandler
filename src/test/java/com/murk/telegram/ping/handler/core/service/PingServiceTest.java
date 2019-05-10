@@ -1,108 +1,145 @@
 package com.murk.telegram.ping.handler.core.service;
 
-import com.murk.telegram.ping.handler.core.cache.PingCache;
-import com.murk.telegram.ping.handler.core.exception.ClientNotFoundException;
-import com.murk.telegram.ping.handler.core.exception.NotAuthorizedException;
-import com.murk.telegram.ping.handler.core.to.PingResponseTO;
+import com.murk.telegram.ping.handler.core.dao.PingDao;
+import com.murk.telegram.ping.handler.core.exception.NotFindModuleException;
+import com.murk.telegram.ping.handler.core.model.Project;
+import com.murk.telegram.ping.handler.core.to.PingTO;
 import com.murk.telegram.ping.handler.core.to.STATUS;
+import com.murk.telegram.ping.handler.core.utils.WeakConcurrentHashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static com.murk.telegram.ping.handler.core.model.MockModels.PROCESS_1;
-import static com.murk.telegram.ping.handler.core.model.RequestModelConstants.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
+import static mocks.model.MockModels.ALL_PROJECTS_INFO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static mocks.model.MockModels.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("file:src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml")
+@ContextConfiguration("file:src/test/resources/service-spring-config.xml")
 public class PingServiceTest {
 
-    @Spy
-    private PingCache cache;
+    @Mock
+    private PingDao dao;
 
-    @Autowired
+    @Mock
+    private WeakConcurrentHashMap<String,Project> cache;
+
     @InjectMocks
+    @Autowired
     private PingService service;
 
     @Before
-    public void setUp(){
+    public void setUp() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+
         MockitoAnnotations.initMocks(this);
+
+        when(dao.getAllProjects()).thenReturn(ALL_PROJECTS_INFO);
+
+        Method postConstruct =  service.getClass().getDeclaredMethod("initCaches",null);
+        postConstruct.setAccessible(true);
+        postConstruct.invoke(service);
+
+
     }
 
     @Test
     public void contextLoad(){
         assertThat(service).isNotNull();
         assertThat(cache).isNotNull();
+        assertThat(dao).isNotNull();
     }
 
     @Test
-    public void authorizationSuccess()
+    public void pingSucessProjectInCache()
     {
-        PingResponseTO expectedAuthorizationResponse = new PingResponseTO(STATUS.SUCCESS, PROCESS_NAME_1);
-        when(cache.containsClient(CLIENT_KEY_1)).thenReturn(true);
-        when(cache.getProcessInformation(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1)).thenReturn(PROCESS_1);
+        PingTO expectedPingResponse = new PingTO(STATUS.SUCCESS, "success ping");
 
-        PingResponseTO actualAuthorizationResponse = service.authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1,CHECK_TIME);
-        assertThat(expectedAuthorizationResponse).isEqualToComparingFieldByField(actualAuthorizationResponse);
+        when(cache.get(PROJECT_NAME_1)).thenReturn(PROJECT_1);
 
-        verify(cache, times(1)).containsClient(CLIENT_KEY_1);
-        verify(cache, times(1)).getProcessInformation(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
-        verifyNoMoreInteractions(cache);
-    }
-
-    @Test
-    public void pingSucess()
-    {
-        PingResponseTO expectedPingResponse = new PingResponseTO(STATUS.SUCCESS, PROCESS_NAME_1);
-        when(cache.containsProcess(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1)).thenReturn(true);
-
-        PingResponseTO actualPingResponse = service.ping(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
+        PingTO actualPingResponse = service.ping(PROJECT_NAME_1, MODULE_KEY_1);
         assertThat(expectedPingResponse).isEqualToComparingFieldByField(actualPingResponse);
 
-        verify(cache, times(1)).containsProcess(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
-        verify(cache, times(1)).putPing(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
+        verify(dao, times(1)).getAllProjects();
+        verify(cache, times(1)).putAll(ALL_PROJECTS_INFO);
+        verify(cache, times(1)).get(PROJECT_NAME_1);
+        verify(dao, times(1)).ping(PROJECT_NAME_1,MODULE_KEY_1);
+
         verifyNoMoreInteractions(cache);
+        verifyNoMoreInteractions(dao);
     }
 
-
-
-    @Test(expected = ClientNotFoundException.class)
-    public void clientNotFound()
+    @Test
+    public void pingSucessNewProjectInDao()
     {
-        when(cache.containsProcess(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1)).thenReturn(false);
-        service.authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1,CHECK_TIME);
+
+    PingTO expectedPingResponse = new PingTO(STATUS.SUCCESS, "success ping");
+
+        Project newProjectInDao = new Project("project3");
+        String newModuleInDao = "54123456abcdef123456abcdef123456";
+        newProjectInDao.setModule(newModuleInDao);
+
+
+        when(cache.get(newProjectInDao.getName())).thenReturn(null);
+        when(dao.getProjInfo(newProjectInDao.getName(),newModuleInDao)).thenReturn(newProjectInDao);
+
+        PingTO actualPingResponse = service.ping(newProjectInDao.getName(),newModuleInDao);
+        assertThat(expectedPingResponse).isEqualToComparingFieldByField(actualPingResponse);
+
+
+        verify(dao, times(1)).getAllProjects();
+        verify(cache, times(1)).putAll(ALL_PROJECTS_INFO);
+
+        verify(dao, times(1)).getProjInfo(newProjectInDao.getName(),newModuleInDao);
+        verify(cache, times(1)).get(newProjectInDao.getName());
+        verify(cache, times(1)).put(newProjectInDao.getName(),newProjectInDao);
+        verify(dao, times(1)).ping(newProjectInDao.getName(),newModuleInDao);
+
+        verifyNoMoreInteractions(cache);
+        verifyNoMoreInteractions(dao);
+
+
     }
 
-    @Test(expected = NotAuthorizedException.class)
-    public void notAutorizedProcess()
+//
+//
+//
+    @Test()
+    public void notFindModule()
     {
-        when(cache.containsProcess(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1)).thenReturn(false);
-        service.authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1,CHECK_TIME);
-    }
+        Project notFindProj = new Project("project3");
+        String notFindModule = "54123456abcdef123456abcdef123456";
+        notFindProj.setModule(notFindModule);
 
 
-    @Test(expected = RuntimeException.class)
-    public void authorizationFail()
-    {
-        when(cache.containsClient(CLIENT_KEY_1)).thenReturn(true);
-        doThrow().when(cache).putProcessInformation(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_1);
-        service.authorization(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1,CHECK_TIME);
-    }
+        when(cache.get(notFindProj.getName())).thenReturn(null);
+        when(dao.getProjInfo(notFindProj.getName(),notFindModule)).thenReturn(null);
 
-    @Test(expected = RuntimeException.class)
-    public void pingFail()
-    {
-        when(cache.containsProcess(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1)).thenReturn(true);
-        doThrow().when(cache).putPing(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
-        service.ping(CLIENT_KEY_1, MODULE_NAME_1, PROCESS_NAME_1);
+        try {
+            PingTO actualPingResponse = service.ping(notFindProj.getName(),notFindModule);
+        } catch (NotFindModuleException e) {
+            assertThat(e.getMessage().equals("Not find module for "+notFindProj.getName()));
+        }
+
+
+        verify(dao, times(1)).getAllProjects();
+        verify(cache, times(1)).putAll(ALL_PROJECTS_INFO);
+
+        verify(dao, times(1)).getProjInfo(notFindProj.getName(),notFindModule);
+        verify(cache, times(1)).get(notFindProj.getName());
+
+        verifyNoMoreInteractions(cache);
+        verifyNoMoreInteractions(dao);
+
     }
 }

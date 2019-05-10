@@ -2,8 +2,8 @@ package com.murk.telegram.ping.handler.core.utils;
 
 import org.junit.Test;
 
-import static com.murk.telegram.ping.handler.core.model.RequestModelConstants.MODULE_KEY_1;
-import static com.murk.telegram.ping.handler.core.model.RequestModelConstants.PROJECT_NAME_1;
+import static mocks.model.MockModels.*;
+
 import static org.junit.Assert.*;
 
 public class ValidationUtilTest {
