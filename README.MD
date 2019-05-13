@@ -47,6 +47,9 @@ Build command.
 #### Spring
 * Spring MVC
 
+#### ORM
+* Hibernate
+
 #### Other
 * Lombok
 
