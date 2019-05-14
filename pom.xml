@@ -55,7 +55,7 @@
         <json-path-assert.version>0.8.1</json-path-assert.version>
 
         <!--Hibernate-->
-        <hibernate.version>5.4.1.Final</hibernate.version>
+        <hibernate.version>4.3.10.Final</hibernate.version>
 
     </properties>
 
@@ -210,11 +210,10 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>3.4.0.GA</version>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
     </dependencies>

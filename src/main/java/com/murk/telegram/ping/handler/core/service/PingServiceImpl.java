@@ -2,6 +2,7 @@ package com.murk.telegram.ping.handler.core.service;
 
 import com.murk.telegram.ping.handler.core.dao.PingDao;
 import com.murk.telegram.ping.handler.core.exception.NotFindModuleException;
+import com.murk.telegram.ping.handler.core.model.Module;
 import com.murk.telegram.ping.handler.core.model.Project;
 import com.murk.telegram.ping.handler.core.to.PingTO;
 import com.murk.telegram.ping.handler.core.to.STATUS;
@@ -34,6 +35,7 @@ public class PingServiceImpl implements PingService {
     @PostConstruct
     private void initCaches()
     {
+        log.warn("start init caches");
         Map<String,Project> allProjects = dao.getAllProjects();
         if (allProjects!= null)
         {
@@ -45,10 +47,11 @@ public class PingServiceImpl implements PingService {
     @Override
     public PingTO ping(String projectName, String moduleKey) {
         ValidationUtil.validate(projectName,moduleKey);
-
-        if (cacheContains(projectName,moduleKey))
+        Module module = getModule(projectName,moduleKey);
+        if (module != null)
         {
-            dao.ping(projectName,moduleKey);
+            module.setPingTime(System.currentTimeMillis());
+            dao.ping(module);
         } else
             {
                 throw  new NotFindModuleException("Not find module for "+projectName);
@@ -58,21 +61,21 @@ public class PingServiceImpl implements PingService {
         return PING_SUCCESS;
     }
 
-    private boolean cacheContains(String projectName, String moduleKey) {
-        boolean moduleExist = false;
+    private Module getModule(String projectName, String moduleKey) {
+        Module module = null;
         Project project = cache.get(projectName);
         if (project != null)
         {
-            if (project.containsModule(moduleKey))
+            if (project.containsModuleKey(moduleKey))
             {
-                moduleExist = true;
+                module = project.getModule(moduleKey);
             } else
                 {
                     Project projectFromDao = dao.getProjInfo(projectName,moduleKey);
                     if (projectFromDao!= null)
                     {
-                        moduleExist = true;
-                        project.setModule(moduleKey);
+                        module = projectFromDao.getModule(moduleKey);
+                        project.setModule(module);
                     }
                 }
         } else
@@ -80,11 +83,11 @@ public class PingServiceImpl implements PingService {
             Project projectFromDao = dao.getProjInfo(projectName,moduleKey);
             if (projectFromDao!= null)
             {
-                moduleExist = true;
                 cache.put(projectName,projectFromDao);
+                module = projectFromDao.getModule(moduleKey);
             }
         }
 
-        return moduleExist;
+        return module;
     }
 }

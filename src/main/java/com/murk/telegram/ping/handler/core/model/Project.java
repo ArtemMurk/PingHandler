@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
@@ -18,9 +18,10 @@ public class Project {
     @Column(name = "name")
     private String name;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name="p_id")
-    private Set<Module> modules = ConcurrentHashMap.newKeySet();
+    @MapKey(name="key")
+    private Map<String,Module> modules = new ConcurrentHashMap<>();
 
     public Project() {}
 
@@ -28,13 +29,17 @@ public class Project {
         this.name = name;
     }
 
-    public void setModule(@NonNull String moduleKey)
+    public void setModule(@NonNull Module module)
     {
-        modules.add(new Module(moduleKey));
+        modules.put(module.getKey(),module);
     }
 
-    public boolean containsModule(@NonNull String moduleKey) {
-        return modules.contains(new Module(moduleKey));
+    public boolean containsModuleKey(@NonNull String moduleKey) {
+        return modules.containsKey(moduleKey);
     }
 
+    public Module getModule(@NonNull String moduleKey)
+    {
+        return modules.get(moduleKey);
+    }
 }

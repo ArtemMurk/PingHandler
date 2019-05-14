@@ -1,5 +1,6 @@
 package com.murk.telegram.ping.handler.core.dao;
 
+import com.murk.telegram.ping.handler.core.model.Module;
 import com.murk.telegram.ping.handler.core.model.Project;
 
 
@@ -10,6 +11,6 @@ public interface  PingDao {
 
     Project getProjInfo(String projectName, String moduleKey);
 
-    void ping(String prjectName, String moduleKey);
+    void ping(Module module);
 
 }

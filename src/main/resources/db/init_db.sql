@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS module_handler
 	p_id INTEGER NOT NULL,
 	name VARCHAR(100) NOT NULL,
 	ping_time BIGINT,
+  interval BIGINT NOT NULL ,
 	mute BOOLEAN DEFAULT FALSE,
 
 	constraint pk_module PRIMARY KEY(key),
