@@ -87,22 +87,21 @@ public class PingDaoTest {
         assertThat(project).isNull();
     }
 
-    // TODO: 14.05.2019
-//    @Test
-//    public void pingSuccess()
-//    {
-//        long pingTime = System.currentTimeMillis();
-//        String moduleKey = MODULE_KEY_1;
-//
-//        Module module = new Module(moduleKey);
-//        module.setPingTime(pingTime);
-//
-//        pingDao.ping(MODULE_1_PROJ_1);
-//
-//        Project project = pingDao.getProjInfo(PROJECT_NAME_1,MODULE_KEY_1);
-//        Module moduleFromDao  = project.getModule(moduleKey);
-//
-//        assertThat(moduleFromDao).isEqualToComparingFieldByField(module);
-//
-//    }
+    @Test
+    public void pingSuccess()
+    {
+        long pingTime = System.currentTimeMillis();
+        String moduleKey = MODULE_KEY_1;
+
+        Module module = new Module(moduleKey);
+        module.setPingTime(pingTime);
+
+        pingDao.ping(module);
+
+        Project project = pingDao.getProjInfo(PROJECT_NAME_1,MODULE_KEY_1);
+        Module moduleFromDao  = project.getModule(moduleKey);
+
+        assertThat(moduleFromDao).isEqualToComparingFieldByField(module);
+
+    }
 }
