@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Entity
-@Table(name = "project_handler", schema = "public")
+@Table(name = "project_handler")
 public class Project {
 
     @Id

@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "module_handler", schema = "public")
+@Table(name = "module_handler")
 public class Module {
 
     @Id

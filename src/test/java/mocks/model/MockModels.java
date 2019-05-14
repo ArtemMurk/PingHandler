@@ -5,6 +5,7 @@ import com.murk.telegram.ping.handler.core.model.Project;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MockModels
@@ -23,18 +24,21 @@ public class MockModels
     public static final Module MODULE_1_PROJ_1;
     public static final Module MODULE_2_PROJ_2;
 
+
     public static final Map<String, Project> ALL_PROJECTS_INFO = new HashMap<>();
     static {
 
 
         PROJECT_1 = new Project(PROJECT_NAME_1);
         PROJECT_2 = new Project(PROJECT_NAME_2);
-
+        PROJECT_1.setId(1);
         MODULE_1_PROJ_1 = new Module(MODULE_KEY_1);
         MODULE_2_PROJ_2 = new Module(MODULE_KEY_2);
 
         PROJECT_1.setModule(MODULE_1_PROJ_1);
         PROJECT_2.setModule(MODULE_2_PROJ_2);
+        PROJECT_1.setId(1);
+        PROJECT_2.setId(2);
 
 
         ALL_PROJECTS_INFO.put(PROJECT_1.getName(), PROJECT_1);
