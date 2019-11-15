@@ -42,7 +42,7 @@
         <spring-framework.version>4.1.5.RELEASE</spring-framework.version>
 
         <!--Jackson-->
-        <jackson.version>2.9.8</jackson.version>
+        <jackson.version>2.10.1</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
 
         <!--Servlet-->
