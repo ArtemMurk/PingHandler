@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Transactional(propagation = Propagation.REQUIRED,
                     rollbackFor = {ObjectNotFoundException.class,ConstraintViolationException.class})
-public class PingDaoImpl  implements PingDao{
+public class  PingDaoImpl  implements PingDao{
 
     private SessionFactory sessionFactory;
 
